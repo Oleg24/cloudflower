@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {trash} from 'font-awesome/css/font-awesome.css';
 import '../assets/styles/TaskCard.css';
 
 
@@ -50,7 +51,9 @@ class Task extends Component {
 					<input className="task-label"
 						   onChange={this.handleTaskUpdate}
 						   value={item.label} />
-					<div onClick={this.handleTaskDelete}>Delete</div>
+					<span className="icon" onClick={this.handleTaskDelete}>
+						<i className="fa fa-trash" />
+					</span>
 				</div>
 				<div className="task-body">
 				</div>

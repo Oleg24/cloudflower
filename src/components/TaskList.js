@@ -36,7 +36,6 @@ class TaskList extends Component {
 			});
 	}
 
-
 	_addNewTask() {
 		this.setState({
 			tasks: [{label: 'Task', id: generateRandomId()}].concat(this.state.tasks)
