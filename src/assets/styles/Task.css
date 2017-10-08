@@ -1,0 +1,24 @@
+.task {
+	display: flex;
+	padding: 20px;
+	flex-direction: column;
+	border: 1px solid darkgray;
+	border-radius: 5px;
+	margin-bottom: 20px;
+	background-color: white;
+}
+
+.task-label {
+	font-size: 18px;
+	border: none;
+}
+
+.task-header {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.task-body {
+	height: 200px;
+}
