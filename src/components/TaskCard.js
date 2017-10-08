@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import '../assets/styles/Task.css';
+import '../assets/styles/TaskCard.css';
 
 
 class Task extends Component {

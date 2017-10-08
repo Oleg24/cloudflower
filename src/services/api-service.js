@@ -9,17 +9,18 @@ const apiService = {
 	fetchTasks(){
 		return axios.get(url)
 			.then((response)=> {
-				console.log('api GET response', response);
-				return response.tasks;
+				return response.data.tasks.map((task, idx)=> {
+					task.id = task.label + idx;
+					return task;
+				});
 			});
 	},
 
-	postTasks(tasks){
+	saveTasks(tasks){
 		return axios.post(url, {tasks: tasks})
-			.then((response)=>{
+			.then((response)=> {
 				console.log('api POST response', response);
-		});
-
+			});
 	}
 };
 

@@ -5,27 +5,36 @@
 	font-family: 'Raleway', sans-serif;
 }
 
-.App-logo {
-	animation: App-logo-spin infinite 20s linear;
-	height: 80px;
-}
-
 .App-header {
 	background-color: #222222;
-	height: 150px;
+	height: 40px;
 	padding: 20px;
 	color: white;
 }
 
-.App-title {
-	font-size: 1.5em;
+.button {
+	height: 40px;
+	background-color: #919faf;
+	color: #ffffff;
+	border: none;
+	font-size: 16px;
+	padding: 10px;
+	border-radius: 5px;
 }
 
-.App-intro {
-	font-size: large;
+.button-save {
+	background-color: #91d6a5;
 }
 
-@keyframes App-logo-spin {
-	from { transform: rotate(0deg); }
-	to { transform: rotate(360deg); }
+.button:hover {
+	cursor: pointer;
+	opacity: .7;
 }
+
+.margin-right-small {
+	margin-right: 5px;
+}
+
+
+
+
