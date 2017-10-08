@@ -1,48 +1,61 @@
 import React, {Component} from 'react';
 import '../assets/styles/TaskList.css'
-import Task from './Task';
+import TaskCard from './TaskCard';
+import DraggableList from 'react-draggable-list';
 
 class TaskList extends Component {
 	constructor() {
 		super();
 		this.state = {
 			tasks: [{
-				label: 'Task 1'
+				label: 'Task 1',
+				id: 0
 			}, {
-				label: 'Task 2'
+				label: 'Task 2',
+				id: 1
 			}, {
-				label: ''
+				label: '',
+				id: 2
 			}]
 		};
 		this.addNewTask = this.addNewTask.bind(this);
-		this.handleTaskUpdate = this.handleTaskUpdate.bind(this);
-		this.handleDeleteTask = this.handleDeleteTask.bind(this);
+		this.commonProps = {
+			handleDeleteTask: this.handleDeleteTask.bind(this),
+			handleUpdateTask: this.handleTaskUpdate.bind(this)
+		};
+		this.handleListChange = this.onListChange.bind(this);
 	}
+
 
 	addNewTask() {
 		this.setState({
-			tasks: [{label: ''}].concat(this.state.tasks)
+			tasks: [{label: '', id: this.state.tasks.length}].concat(this.state.tasks)
 		});
 	}
 
-	handleTaskUpdate(key, updatedTask) {
+	handleTaskUpdate(id, updatedTask) {
 		this.setState({
-			tasks: this.state.tasks.map((task, idx)=> {
-				return idx === key ? Object.assign({}, updatedTask) : task;
+			tasks: this.state.tasks.map((task)=> {
+				return task.id === id ? Object.assign({}, {id: id}, updatedTask) : task;
 			})
 		});
 	}
 
-	handleDeleteTask(key) {
+	handleDeleteTask(id) {
 		this.setState({
-			tasks: this.state.tasks.filter((task, idx)=> {
-				return idx !== key;
+			tasks: this.state.tasks.filter((task)=> {
+				return task.id !== id;
 			})
 		});
+	}
+
+	onListChange(newTaskList) {
+		this.setState({tasks: newTaskList});
 	}
 
 	render() {
-		
+		const {tasks} = this.state;
+		const {useContainer} = this.state;
 		return (
 			<div className="task-list">
 				<div className="task-list__header">
@@ -55,13 +68,17 @@ class TaskList extends Component {
 							   value="Save" />
 					</div>
 				</div>
-				<div className=" task-list__container">
-					{this.state.tasks.map((task, idx)=> {
-						return (<Task key={idx} id={idx}
-									  label={task.label}
-									  onChange={this.handleTaskUpdate}
-									  onDelete={this.handleDeleteTask} />)
-					})}
+				<div id="task-list-container" className="task-list__container">
+					<DraggableList
+						itemKey={"id"}
+						template={TaskCard}
+						list={tasks}
+						onMoveEnd={newList => this.handleListChange(newList)}
+						onTaskDelete={this.handleDeleteTask}
+						onTaskUpdate={this.handleTaskUpdate}
+						commonProps={this.commonProps}
+						container={()=> useContainer ? this.container : document.body}
+					/>
 				</div>
 			</div>
 		)
