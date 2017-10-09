@@ -2,55 +2,81 @@ import React, {Component} from 'react';
 import DraggableList from 'react-draggable-list';
 import '../assets/styles/TaskList.css'
 import TaskCard from './TaskCard';
+import ListAlert  from './ListErrorComponent';
+import Alert from './AlertComponent';
 import apiService from '../services/api-service';
+import alertConstants from '../constants/alert-constants';
 import {generateRandomId} from '../services/helper-service';
+import {buildTaskListForSave} from '../services/task-list-vo';
+
 
 class TaskList extends Component {
 	constructor() {
 		super();
 		this.state = {
-			tasks: []
+			tasks: [],
+			showAlert: false,
+			disableSaveButton: true,
+			alertOptions: {}
 		};
+
 		this.addNewTask = this._addNewTask.bind(this);
 		this.saveTaskList = this._saveTaskList.bind(this);
-		this.commonProps = {
+		this.commonTaskProps = {
 			handleDeleteTask: this._handleDeleteTask.bind(this),
 			handleUpdateTask: this._handleTaskUpdate.bind(this)
 		};
 		this.handleListChange = this._onListChange.bind(this);
 	}
 
+	timeouts = [];
+
 	componentDidMount() {
+		this._fetchTasks();
+	}
+
+	componentWillUnmount() {
+		this.timeouts.forEach((timeout)=> {
+			clearTimeout(timeout);
+		});
+	}
+
+	_fetchTasks() {
 		apiService.fetchTasks()
 			.then((tasks)=> {
-				console.log('tasks from api', tasks);
 				this.setState({
 					tasks: tasks
 				})
 			})
 			.catch(()=> {
-				console.log('error from api');
 				this.setState({
 					tasks: []
-				})
+				});
+				this._fetchTasks();
+			});
+	}
+	
+	_saveTaskList() {
+		const {tasks} = this.state;
+		this._disableSaveButton(true);
+		apiService.saveTasks(buildTaskListForSave(tasks))
+			.then(()=> {
+				this._handleAlert(alertConstants.success);
+			})
+			.catch(()=> {
+				this._handleAlert(alertConstants.error);
+				this.timeouts.push(setTimeout(()=> {
+					this._disableSaveButton(false);
+				}, 5000));
 			});
 	}
 
 	_addNewTask() {
+		const newTask = {label: '', id: generateRandomId(), isNew: true};
 		this.setState({
-			tasks: [{label: 'Task', id: generateRandomId()}].concat(this.state.tasks)
+			tasks: [newTask].concat(this.state.tasks)
 		});
-	}
-
-	_saveTaskList() {
-		const {tasks} = this.state;
-		apiService.saveTasks(tasks)
-			.then((tasks)=> {
-				console.log('successfully updated tasks');
-			})
-			.catch(()=> {
-				console.log('an error occured updating tasks');
-			});
+		this._disableSaveButton(false);
 	}
 
 	_handleTaskUpdate(id, updatedTask) {
@@ -59,6 +85,7 @@ class TaskList extends Component {
 				return task.id === id ? Object.assign({}, {id: id}, updatedTask) : task;
 			})
 		});
+		this._disableSaveButton(false);
 	}
 
 	_handleDeleteTask(id) {
@@ -67,17 +94,38 @@ class TaskList extends Component {
 				return task.id !== id;
 			})
 		});
+		this._disableSaveButton(false);
 	}
 
 	_onListChange(newTaskList) {
 		this.setState({tasks: newTaskList});
+		this._disableSaveButton(false);
+	}
+
+	_handleAlert(alertOptions) {
+		this.setState({
+			alertOptions: alertOptions,
+			showAlert: true
+		});
+		this.timeouts.push(setTimeout(()=> {
+			this.setState({
+				showAlert: false
+			});
+		}, 5000));
+	}
+
+	_disableSaveButton(newButtonState) {
+		this.setState({
+			disableSaveButton: newButtonState
+		});
 	}
 
 	render() {
-		const {tasks} = this.state;
-		const {useContainer} = this.state;
+		const {tasks, showAlert, alertOptions, disableSaveButton} = this.state;
 		return (
 			<div className="task-list">
+				{showAlert ?
+					<Alert alertOptions={alertOptions} /> : null }
 				<div className="task-list__header">
 					<div className="task-list__title">Tasks</div>
 					<div className="task-list__button-group">
@@ -86,22 +134,24 @@ class TaskList extends Component {
 							   value="Add Task"
 							   onClick={this.addNewTask} />
 						<input type="button"
+							   disabled={disableSaveButton}
 							   className="button button-save"
 							   value="Save"
 							   onClick={this.saveTaskList} />
 					</div>
 				</div>
 				<div id="task-list-container" className="task-list__container">
-					<DraggableList
-						itemKey={"id"}
-						template={TaskCard}
-						list={tasks}
-						onMoveEnd={newList => this.handleListChange(newList)}
-						onTaskDelete={this.handleDeleteTask}
-						onTaskUpdate={this.handleTaskUpdate}
-						commonProps={this.commonProps}
-						container={()=> useContainer ? this.container : document.body}
-					/>
+					{this.state.tasks.length ?
+						<DraggableList
+							itemKey={"id"}
+							template={TaskCard}
+							list={tasks}
+							padding={20}
+							onMoveEnd={newList => this.handleListChange(newList)}
+							commonProps={this.commonTaskProps}
+							container={()=> document.body}
+						/> : <ListAlert /> }
+
 				</div>
 			</div>
 		)

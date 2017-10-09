@@ -1,17 +1,22 @@
-.task {
+.task-card {
 	display: flex;
 	padding: 20px;
 	flex-direction: column;
 	border: 1px solid darkgray;
 	border-radius: 5px;
-	margin-bottom: 20px;
 	background-color: white;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 10px 10px 0;
 }
 
 .task-label {
 	font-size: 18px;
 	border: none;
 	padding: 5px;
+}
+
+.task-label:hover {
+	background-color: lightgray;
+	opacity: .6;
 }
 
 .task-header {
@@ -24,7 +29,7 @@
 	height: 200px;
 }
 
-.task .dragHandle {
+.task-card .drag-handle {
 	position: absolute;
 	top: 25px;
 	left: 5px;

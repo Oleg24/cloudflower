@@ -8,15 +8,13 @@ class Task extends Component {
 		super(props);
 		this.handleTaskUpdate = this.handleTaskUpdate.bind(this);
 		this.handleTaskDelete = this.handleTaskDelete.bind(this);
-		this.state = {
-			value: 0
-		}
 	}
 
-	_inc() {
-		this.setState({
-			value: this.state.value + 1
-		});
+	componentDidMount() {
+		const isNew = this.props.item.isNew;
+		if (isNew) {
+			this.labelInput.focus();
+		}
 	}
 
 	handleTaskUpdate(e) {
@@ -35,20 +33,15 @@ class Task extends Component {
 	}
 
 	render() {
-		const {item, itemSelected, dragHandle} = this.props;
-		const scale = itemSelected * 0.05 + 1;
-		const shadow = itemSelected * 15 + 1;
+		const {item, dragHandle} = this.props;
 
 		return (
-			<div className="task"
-				 style={{
-         			transform: `scale(${scale})`,
-          			boxShadow: `rgba(0, 0, 0, 0.3) 0px ${shadow}px ${2 * shadow}px 0px`
-        		}}
-			>
-				{dragHandle(<div className="dragHandle" />)}
+			<div className="task-card">
+				{dragHandle(<div className="drag-handle" />)}
 				<div className="task-header">
 					<input className="task-label"
+						   ref={(input) => { this.labelInput = input; }}
+						   placeholder="Task"
 						   onChange={this.handleTaskUpdate}
 						   value={item.label} />
 					<span className="icon" onClick={this.handleTaskDelete}>

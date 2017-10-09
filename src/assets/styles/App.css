@@ -31,11 +31,20 @@
 	opacity: .7;
 }
 
+input[type="button"]:disabled {
+	opacity: .7;
+}
+
+input[type="button"]:disabled:hover {
+	cursor: default;
+	opacity: .7;
+}
+
 .margin-right-small {
 	margin-right: 5px;
 }
 
-.icon:hover{
+.icon:hover {
 	cursor: pointer;
 }
 

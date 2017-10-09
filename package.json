@@ -6,6 +6,7 @@
     "axios": "^0.16.2",
     "font-awesome": "^4.7.0",
     "react": "^16.0.0",
+    "react-alert": "^2.3.0",
     "react-dom": "^16.0.0",
     "react-draggable-list": "^3.4.1",
     "react-scripts": "1.0.14"
@@ -15,5 +16,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "enzyme-adapter-react-16": "^1.0.1",
+    "react-test-renderer": "^16.0.0",
+    "enzyme": "^3.1.0",
+    "enzyme-to-json": "^3.1.2",
+    "jest-enzyme": "^4.0.0"
   }
 }
